@@ -11,7 +11,6 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.5/babel.min.js"></script>
   <script src="https://cdn.tailwindcss.com"></script>
-  <script src="https://unpkg.com/lucide@latest"></script>
   <style>
     * { -webkit-tap-highlight-color: transparent; }
     body { 
@@ -160,9 +159,12 @@
 
       const filterSessionsByPeriod = (period) => {
         const now = new Date();
+        const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
         return sessions.filter(session => {
           const sessionDate = new Date(session.startTime);
-          if (period === 'week') {
+          if (period === 'today') {
+            return sessionDate >= today;
+          } else if (period === 'week') {
             const weekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
             return sessionDate >= weekAgo;
           } else if (period === 'month') {
@@ -175,9 +177,12 @@
 
       const filterFuelByPeriod = (period) => {
         const now = new Date();
+        const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
         return fuelLogs.filter(log => {
           const logDate = new Date(log.date);
-          if (period === 'week') {
+          if (period === 'today') {
+            return logDate >= today;
+          } else if (period === 'week') {
             const weekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
             return logDate >= weekAgo;
           } else if (period === 'month') {
@@ -214,6 +219,7 @@
         };
       };
 
+      const todayStats = calculateStats('today');
       const weekStats = calculateStats('week');
       const monthStats = calculateStats('month');
       const allTimeStats = calculateStats('all');
@@ -374,6 +380,7 @@
 
             {activeTab === 'stats' && (
               <div>
+                <StatsSection title="Today" stats={todayStats} />
                 <StatsSection title="This Week" stats={weekStats} />
                 <StatsSection title="This Month" stats={monthStats} />
                 <StatsSection title="All Time" stats={allTimeStats} />
